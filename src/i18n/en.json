@@ -1,0 +1,264 @@
+{
+  "nav": {
+    "catalog": "Catalog",
+    "contacts": "Contacts",
+    "login": "Login",
+    "profile": "Profile",
+    "cart": "Cart",
+    "admin": "Admin"
+  },
+  "hero": {
+    "title": "Welcome to",
+    "titleAccent": "Avtoservis",
+    "subtitle": "Professional tuning and service for your car. Quality you can trust.",
+    "cta": "View Catalog"
+  },
+  "catalog": {
+    "title": "Catalog",
+    "filters": {
+      "all": "All",
+      "engine": "Engine",
+      "exhaust": "Exhaust",
+      "suspension": "Suspension",
+      "brakes": "Brakes",
+      "wheels": "Wheels",
+      "interior": "Interior",
+      "exterior": "Exterior",
+      "other": "Other"
+    },
+    "empty": "No products found",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "loading": "Loading..."
+  },
+  "booking": {
+    "title": "Book Your Service",
+    "subtitle": "Schedule your visit today",
+    "form": {
+      "name": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email Address",
+      "car": "Car Make & Model",
+      "service": "Service Type",
+      "date": "Preferred Date",
+      "message": "Additional Notes",
+      "submit": "Submit Request"
+    },
+    "placeholders": {
+      "name": "Enter your full name",
+      "phone": "+7 (___) ___-__-__",
+      "email": "your@email.com",
+      "car": "e.g. BMW M4, Mercedes AMG",
+      "service": "Select a service",
+      "date": "Select date",
+      "message": "Tell us about your requirements..."
+    },
+    "errors": {
+      "required": "Required field",
+      "invalidPhone": "Invalid phone number",
+      "invalidEmail": "Invalid email address"
+    },
+    "success": "Request sent! We'll contact you shortly.",
+    "error": "Something went wrong. Please try again."
+  },
+  "contacts": {
+    "title": "Get In Touch",
+    "subtitle": "Visit us or reach out directly",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "hours": "Working Hours",
+    "social": "Follow Us"
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Cart is empty",
+    "goToCatalog": "Go to Catalog",
+    "total": "Total:",
+    "order": "Checkout",
+    "installCheckbox": "Book installation",
+    "bookingSection": {
+      "install": "Installation + parts",
+      "installOnly": "Book installation",
+      "partsOnly": "Order parts",
+      "title": "Service Booking",
+      "car": "Car make",
+      "carPlaceholder": "BMW M3, Mercedes AMG GT...",
+      "date": "Preferred date",
+      "time": "Time"
+    },
+    "delivery": {
+      "title": "Delivery method",
+      "pickup": "Pickup",
+      "delivery": "Delivery",
+      "city": "City",
+      "cityPlaceholder": "Moscow",
+      "street": "Street",
+      "streetPlaceholder": "Example St",
+      "house": "House",
+      "housePlaceholder": "10",
+      "apartment": "Apt/Office",
+      "apartmentPlaceholder": "52"
+    },
+    "contactInfo": "Contact Information",
+    "yourName": "Your name",
+    "phoneNum": "Phone",
+    "emailAddr": "Email",
+    "submit": "Confirm Order",
+    "ordering": "Processing...",
+    "success": {
+      "title": "Order placed!",
+      "message": "We will contact you shortly to confirm.",
+      "back": "Back to Home"
+    },
+    "error": "Error placing order"
+  },
+  "profile": {
+    "title": "My Account",
+    "back": "Home",
+    "logout": "Logout",
+    "avatar": {
+      "hint": "Click icon to upload avatar"
+    },
+    "email": "Email",
+    "name": "Name / Nickname",
+    "namePlaceholder": "Enter your name",
+    "save": "Save Profile",
+    "saving": "Saving...",
+    "saved": "Profile updated",
+    "password": {
+      "title": "Change Password",
+      "current": "Current password",
+      "new": "New password",
+      "newPlaceholder": "Min 6 characters",
+      "confirm": "Confirm password",
+      "change": "Change Password",
+      "changing": "Changing...",
+      "changed": "Password changed successfully",
+      "errors": {
+        "minLength": "Password must be at least 6 characters",
+        "notMatch": "Passwords do not match",
+        "incorrect": "Current password is incorrect"
+      }
+    },
+    "orders": {
+      "title": "Order History",
+      "empty": "You have no orders yet",
+      "loading": "Loading...",
+      "dateTime": "Date & time:",
+      "service": "Service:",
+      "car": "Car:",
+      "carNotSpecified": "Not specified",
+      "bookingDate": "Booking date:",
+      "message": "Message:",
+      "status": {
+        "new": "New",
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      }
+    }
+  },
+  "productDetail": {
+    "back": "Back to Catalog",
+    "inStock": "✓ In stock",
+    "outOfStock": "✗ To order",
+    "inCart": "In Cart",
+    "addToCart": "Add to Cart",
+    "added": "Added!",
+    "order": "Order",
+    "similar": "Similar Products",
+    "request": {
+      "title": "Leave a Request",
+      "name": "Your name",
+      "phone": "Phone",
+      "message": "Message",
+      "messagePlaceholder": "Additional info...",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "successTitle": "Request sent!",
+      "successMessage": "We will contact you shortly.",
+      "close": "Close"
+    },
+    "noDescription": "No description"
+  },
+  "services": {
+    "title": "Services",
+    "price": "Price",
+    "loading": "Loading...",
+    "order": "Book"
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Login",
+      "noAccount": "No account?",
+      "register": "Register"
+    },
+    "register": {
+      "title": "Register",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "submit": "Register",
+      "hasAccount": "Have an account?",
+      "login": "Login"
+    }
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "back": "Back to Site",
+    "tabs": {
+      "services": "Services",
+      "parts": "Parts",
+      "bookings": "Orders",
+      "gallery": "Gallery"
+    },
+    "service": {
+      "add": "Add Service",
+      "edit": "Edit",
+      "delete": "Delete",
+      "name": "Name",
+      "nameRu": "Name (RU)",
+      "nameEn": "Name (EN)",
+      "description": "Description",
+      "descriptionRu": "Description (RU)",
+      "descriptionEn": "Description (EN)",
+      "category": "Category",
+      "price": "Price",
+      "image": "Image",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "part": {
+      "add": "Add Part",
+      "edit": "Edit",
+      "delete": "Delete",
+      "stock": "Stock",
+      "inStock": "In stock"
+    },
+    "booking": {
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "tagline": "Quality and Professionalism"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No"
+  }
+}

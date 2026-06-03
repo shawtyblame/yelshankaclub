@@ -1,0 +1,692 @@
+.adminPage {
+  min-height: 100vh;
+  background: var(--bg-dark);
+}
+
+.adminHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 48px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.logoAccent {
+  color: var(--text-secondary);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.backBtn {
+  padding: 10px 20px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--bg-dark);
+  background: var(--text-primary);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.backBtn:hover {
+  opacity: 0.8;
+}
+
+.userInfo {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.logoutBtn {
+  padding: 10px 20px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logoutBtn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.adminContent {
+  padding: 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  padding: 12px 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--text-primary);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.active {
+  color: var(--text-primary);
+}
+
+.tab.active::after {
+  transform: scaleX(1);
+}
+
+.sectionTitle {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 32px;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.serviceCard {
+  background: var(--bg-card);
+  padding: 24px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.serviceName {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.serviceCategory {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.serviceDesc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.galleryImage {
+  width: 100%;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.galleryImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.servicePrice {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.serviceActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  flex: 1;
+  padding: 8px 6px;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.editBtn {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.editBtn:hover {
+  opacity: 0.8;
+}
+
+.deleteBtn {
+  background: transparent;
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  cursor: pointer;
+  padding: 10px 16px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+}
+
+.deleteBtn:hover {
+  background: #ff4444;
+  color: white;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.deleteAllBtn {
+  background: #ff4444;
+  color: white;
+  border: none;
+}
+
+.deleteAllBtn:hover {
+  background: #cc0000;
+}
+
+.deleteItemBtn {
+  background: transparent;
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  padding: 6px 8px;
+  font-size: 0.7rem;
+}
+
+.deleteItemBtn:hover {
+  background: #ff4444;
+  color: white;
+}
+
+.addBtn {
+  background: var(--text-primary);
+  color: var(--bg-dark);
+  padding: 14px 28px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  margin-bottom: 32px;
+}
+
+.addBtn:hover {
+  opacity: 0.8;
+}
+
+.imageInputRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.imageInputRow .input {
+  flex: 1;
+}
+
+.removeImageBtn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #ff4444;
+  background: transparent;
+  border: 1px solid #ff4444;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.removeImageBtn:hover {
+  background: #ff4444;
+  color: #fff;
+}
+
+.addImageBtn {
+  padding: 10px 16px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addImageBtn:hover {
+  border-color: var(--text-primary);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  background: var(--bg-card);
+  padding: 32px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalTitle {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 32px;
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--text-secondary);
+}
+
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  padding: 14px;
+}
+
+.select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.saveBtn {
+  flex: 1;
+  padding: 14px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--bg-dark);
+  background: var(--text-primary);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.saveBtn:hover {
+  opacity: 0.8;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 14px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelBtn:hover {
+  border-color: var(--text-secondary);
+}
+
+.bookingsTable {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-collapse: collapse;
+}
+
+.bookingsTable th,
+.bookingsTable td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.bookingsTable th {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  background: var(--surface);
+}
+
+.bookingsTable tr:last-child td {
+  border-bottom: none;
+}
+
+.bookingsTable tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statusNew {
+  border: 1px solid var(--text-secondary);
+  color: var(--text-secondary);
+}
+
+.statusConfirmed {
+  border: 1px solid #4ade80;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.statusCompleted {
+  border: 1px solid #6496ff;
+  color: #6496ff;
+  background: rgba(100, 150, 255, 0.1);
+}
+
+.statusActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statusBtn {
+  padding: 6px 12px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  background: var(--surface);
+  color: var(--text-primary);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.statusBtn:hover {
+  opacity: 0.8;
+}
+
+.confirmBtn {
+  background: #4ade80;
+  color: #0a0a0a;
+}
+
+.completeBtn {
+  background: #22c55e;
+  color: #0a0a0a;
+}
+
+.serviceCell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-secondary);
+}
+
+.emptyIcon {
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .adminHeader {
+    padding: 16px 24px;
+  }
+
+  .adminContent {
+    padding: 24px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .bookingsTable {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+.roleSelect {
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.roleSelect:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.error {
+  padding: 16px;
+  border: 1px solid #ff4444;
+  color: #ff4444;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.success {
+  padding: 16px;
+  border: 1px solid #44ff44;
+  color: #44ff44;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.passwordForm {
+  position: fixed;
+  top: 80px;
+  right: 48px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 24px;
+  min-width: 300px;
+  z-index: 100;
+}
+
+.passwordForm h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.passwordForm .input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.passwordForm .input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.passwordFormBtns {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.bookingIdCell {
+  cursor: pointer;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.bookingIdCell:hover {
+  text-decoration: underline;
+}
+
+.currentStock {
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.viewBookingDetails {
+  max-width: 600px;
+}
+
+.bookingDetailSection {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.bookingDetailTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--primary);
+}
+
+.bookingDetailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.bookingDetailRow:last-child {
+  border-bottom: none;
+}
+
+.bookingDetailLabel {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.bookingDetailValue {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  text-align: right;
+  max-width: 60%;
+}
