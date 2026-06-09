@@ -48,29 +48,31 @@ export default function Cart() {
     setError('');
 
     try {
-      const itemsText = cart.map(item => `${item.name_ru || item.name} x${item.quantity}`).join(', ');
-      let serviceText = '';
+      const items = cart.map(item => ({
+        id: item.id,
+        item_name: item.name_ru || item.name,
+        quantity: item.quantity,
+        price: item.price,
+        item_type: item.stock !== undefined ? 'part' : 'service'
+      }));
 
-      if (bookInstallation && hasServicesInCart) {
-        serviceText = `${t('cart.bookingSection.install')}: ${itemsText}`;
-      } else if (bookInstallation) {
-        serviceText = `${t('cart.bookingSection.installOnly')}: ${itemsText}`;
-      } else {
-        serviceText = `${t('cart.bookingSection.partsOnly')}: ${itemsText}`;
-      }
-
-      const deliveryInfo = hasPartsInCart && deliveryMethod === 'delivery' 
-        ? `, ${t('cart.delivery.title')}: ${formData.city || '-'}, ${formData.street || '-'}, ${formData.house || '-'}${formData.apartment ? ', ' + formData.apartment : ''}`
-        : `, ${t('cart.delivery.pickup')}`;
-
-      const items = cart.map(item => ({ id: item.id, quantity: item.quantity }));
       const res = await fetch(`${API_URL}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...formData,
-          service: serviceText + deliveryInfo,
-          car: formData.car || t('profile.orders.carNotSpecified'),
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email || null,
+          car: formData.car || null,
+          message: formData.message || null,
+          booking_date: formData.date || null,
+          booking_time: formData.time || null,
+          delivery_method: hasPartsInCart ? deliveryMethod : null,
+          delivery_city: formData.city || null,
+          delivery_street: formData.street || null,
+          delivery_house: formData.house || null,
+          delivery_apartment: formData.apartment || null,
+          payment_method: paymentMethod,
           items
         })
       });

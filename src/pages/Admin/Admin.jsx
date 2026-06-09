@@ -62,10 +62,16 @@ export default function Admin() {
     phone: '',
     email: '',
     car: '',
-    date: '',
-    time: '',
+    booking_date: '',
+    booking_time: '',
     message: '',
-    status: ''
+    status: '',
+    delivery_method: 'pickup',
+    delivery_city: '',
+    delivery_street: '',
+    delivery_house: '',
+    delivery_apartment: '',
+    payment_method: 'cash'
   });
 
   useEffect(() => {
@@ -277,10 +283,16 @@ export default function Admin() {
       phone: booking.phone || '',
       email: booking.email || '',
       car: booking.car || '',
-      date: booking.date || '',
-      time: booking.time || '',
+      booking_date: booking.booking_date || '',
+      booking_time: booking.booking_time || '',
       message: booking.message || '',
-      status: booking.status || 'new'
+      status: booking.status || 'new',
+      delivery_method: booking.delivery_method || 'pickup',
+      delivery_city: booking.delivery_city || '',
+      delivery_street: booking.delivery_street || '',
+      delivery_house: booking.delivery_house || '',
+      delivery_apartment: booking.delivery_apartment || '',
+      payment_method: booking.payment_method || 'cash'
     });
     setModalOpen(true);
     setModalType('booking');
@@ -727,8 +739,12 @@ export default function Admin() {
                     <td>{new Date(booking.created_at).toLocaleString('ru-RU')}</td>
                     <td>{booking.name}</td>
                     <td>{booking.phone}</td>
-                    <td className={styles.serviceCell}>{booking.service}</td>
-                    <td>{booking.date && booking.time ? `${booking.date} ${booking.time}` : (booking.date || booking.time || '-')}</td>
+                    <td className={styles.serviceCell}>
+                      {booking.items && booking.items.length > 0
+                        ? booking.items.map(i => `${i.item_name}${i.quantity > 1 ? ` x${i.quantity}` : ''}`).join(', ')
+                        : '-'}
+                    </td>
+                    <td>{booking.booking_date && booking.booking_time ? `${booking.booking_date} ${booking.booking_time}` : (booking.booking_date || booking.booking_time || '-')}</td>
                     <td>
                       <span className={`${styles.statusBadge} ${styles[`status${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}`] || styles.statusNew}`}>
                         {booking.status === 'new' ? 'Новая' : booking.status === 'confirmed' ? 'Одобрена' : booking.status === 'completed' ? 'Оказано' : booking.status}
@@ -1130,12 +1146,12 @@ export default function Admin() {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Дата</label>
+                  <label className={styles.label}>Дата записи</label>
                   <input
                     type="date"
                     className={styles.input}
-                    value={bookingFormData.date}
-                    onChange={(e) => setBookingFormData({ ...bookingFormData, date: e.target.value })}
+                    value={bookingFormData.booking_date}
+                    onChange={(e) => setBookingFormData({ ...bookingFormData, booking_date: e.target.value })}
                   />
                 </div>
                 <div className={styles.formGroup}>
@@ -1143,14 +1159,56 @@ export default function Admin() {
                   <input
                     type="time"
                     className={styles.input}
-                    value={bookingFormData.time}
-                    onChange={(e) => setBookingFormData({ ...bookingFormData, time: e.target.value })}
+                    value={bookingFormData.booking_time}
+                    onChange={(e) => setBookingFormData({ ...bookingFormData, booking_time: e.target.value })}
                   />
                 </div>
               </div>
 
               <div className={styles.formGroup}>
-                <label className={styles.label}>Услуга</label>
+                <label className={styles.label}>Способ получения</label>
+                <select
+                  className={styles.input}
+                  value={bookingFormData.delivery_method}
+                  onChange={(e) => setBookingFormData({ ...bookingFormData, delivery_method: e.target.value })}
+                >
+                  <option value="pickup">Самовывоз</option>
+                  <option value="delivery">Доставка</option>
+                </select>
+              </div>
+
+              {bookingFormData.delivery_method === 'delivery' && (
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Город</label>
+                    <input type="text" className={styles.input} value={bookingFormData.delivery_city}
+                      onChange={(e) => setBookingFormData({ ...bookingFormData, delivery_city: e.target.value })} />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Улица</label>
+                    <input type="text" className={styles.input} value={bookingFormData.delivery_street}
+                      onChange={(e) => setBookingFormData({ ...bookingFormData, delivery_street: e.target.value })} />
+                  </div>
+                </div>
+              )}
+
+              {bookingFormData.delivery_method === 'delivery' && (
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Дом</label>
+                    <input type="text" className={styles.input} value={bookingFormData.delivery_house}
+                      onChange={(e) => setBookingFormData({ ...bookingFormData, delivery_house: e.target.value })} />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Кв./офис</label>
+                    <input type="text" className={styles.input} value={bookingFormData.delivery_apartment}
+                      onChange={(e) => setBookingFormData({ ...bookingFormData, delivery_apartment: e.target.value })} />
+                  </div>
+                </div>
+              )}
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Сообщение</label>
                 <textarea
                   className={`${styles.input} ${styles.textarea}`}
                   value={bookingFormData.message}
@@ -1238,13 +1296,34 @@ export default function Admin() {
             <div className={styles.bookingDetailSection}>
               <h3 className={styles.bookingDetailTitle}>Заказ</h3>
               <div className={styles.bookingDetailRow}>
-                <span className={styles.bookingDetailLabel}>Услуга/Товар:</span>
-                <span className={styles.bookingDetailValue}>{viewingBooking.service}</span>
+                <span className={styles.bookingDetailLabel}>Товары/услуги:</span>
+                <div className={styles.bookingDetailValue}>
+                  {viewingBooking.items && viewingBooking.items.length > 0 ? (
+                    <ul style={{ margin: 0, paddingLeft: 16 }}>
+                      {viewingBooking.items.map((item, idx) => (
+                        <li key={idx}>
+                          {item.item_name}{item.quantity > 1 ? ` x${item.quantity}` : ''}
+                          {item.unit_price ? ` — ${item.unit_price}` : ''}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : <span>-</span>}
+                </div>
               </div>
-              {viewingBooking.date && (
+              {viewingBooking.booking_date && (
                 <div className={styles.bookingDetailRow}>
                   <span className={styles.bookingDetailLabel}>Дата записи:</span>
-                  <span className={styles.bookingDetailValue}>{viewingBooking.date} {viewingBooking.time || ''}</span>
+                  <span className={styles.bookingDetailValue}>{viewingBooking.booking_date} {viewingBooking.booking_time || ''}</span>
+                </div>
+              )}
+              {viewingBooking.delivery_method && (
+                <div className={styles.bookingDetailRow}>
+                  <span className={styles.bookingDetailLabel}>Доставка:</span>
+                  <span className={styles.bookingDetailValue}>
+                    {viewingBooking.delivery_method === 'delivery'
+                      ? `${viewingBooking.delivery_city || ''}, ${viewingBooking.delivery_street || ''}, ${viewingBooking.delivery_house || ''}${viewingBooking.delivery_apartment ? ', ' + viewingBooking.delivery_apartment : ''}`
+                      : 'Самовывоз'}
+                  </span>
                 </div>
               )}
               {viewingBooking.message && (

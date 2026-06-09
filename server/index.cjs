@@ -347,37 +347,82 @@ app.delete('/api/parts/:id', authenticateToken, requireAdmin, async (req, res) =
   }
 });
 
-app.get('/api/bookings', authenticateToken, requireAdmin, async (req, res) => {
-  const bookings = await pool.query(`
-    SELECT b.*, u.email as user_email 
-    FROM bookings b 
-    LEFT JOIN users u ON b.user_id = u.id 
+const getBookingWithItems = async (id = null) => {
+  const whereClause = id ? 'WHERE b.id = $1' : '';
+  const params = id ? [id] : [];
+  const result = await pool.query(`
+    SELECT b.*, u.email as user_email,
+      COALESCE(
+        json_agg(json_build_object(
+          'id', oi.id, 'item_type', oi.item_type,
+          'item_id', oi.item_id, 'item_name', oi.item_name,
+          'quantity', oi.quantity, 'unit_price', oi.unit_price
+        ) FILTER (WHERE oi.id IS NOT NULL),
+        '[]'::json
+      ) as items
+    FROM bookings b
+    LEFT JOIN users u ON b.user_id = u.id
+    LEFT JOIN order_items oi ON oi.booking_id = b.id
+    ${whereClause}
+    GROUP BY b.id, u.email
     ORDER BY b.created_at DESC
-  `);
-  res.json(bookings.rows);
+  `, params);
+  return result.rows;
+};
+
+app.get('/api/bookings', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const bookings = await getBookingWithItems();
+    res.json(bookings);
+  } catch (error) {
+    console.error('Fetch bookings error:', error);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
 });
 
 app.get('/api/bookings/my', authenticateToken, async (req, res) => {
-  const bookings = await pool.query(
-    'SELECT * FROM bookings WHERE user_id = $1 OR email = $2 ORDER BY created_at DESC',
-    [req.user.id, req.user.email]
-  );
-  res.json(bookings.rows);
+  try {
+    const result = await pool.query(`
+      SELECT b.*,
+        COALESCE(
+          json_agg(json_build_object(
+            'id', oi.id, 'item_type', oi.item_type,
+            'item_id', oi.item_id, 'item_name', oi.item_name,
+            'quantity', oi.quantity, 'unit_price', oi.unit_price
+          ) FILTER (WHERE oi.id IS NOT NULL),
+          '[]'::json
+        ) as items
+      FROM bookings b
+      LEFT JOIN order_items oi ON oi.booking_id = b.id
+      WHERE b.user_id = $1 OR b.email = $2
+      GROUP BY b.id
+      ORDER BY b.created_at DESC
+    `, [req.user.id, req.user.email]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Fetch my bookings error:', error);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
 });
 
 app.post('/api/bookings', async (req, res) => {
   const client = await pool.connect();
   try {
-    const { name, phone, email, car, service, date, message, items } = req.body;
-    
-    if (!name || !phone || !service) {
-      return res.status(400).json({ error: 'Name, phone, and service are required' });
+    const {
+      name, phone, email, car, message,
+      booking_date, booking_time,
+      delivery_method, delivery_city, delivery_street, delivery_house, delivery_apartment,
+      items, payment_method
+    } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({ error: 'Name and phone are required' });
     }
 
     let userId = null;
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    
+
     if (token) {
       try {
         const decoded = jwt.verify(token, JWT_SECRET);
@@ -388,17 +433,31 @@ app.post('/api/bookings', async (req, res) => {
     await client.query('BEGIN');
 
     const result = await client.query(`
-      INSERT INTO bookings (user_id, name, phone, email, car, service, date, message)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id
-    `, [userId, name, phone, email, car, service, date, message]);
+      INSERT INTO bookings (user_id, name, phone, email, car, message,
+        booking_date, booking_time, delivery_method,
+        delivery_city, delivery_street, delivery_house, delivery_apartment,
+        payment_method)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING id
+    `, [userId, name, phone, email || null, car || null, message || null,
+        booking_date || null, booking_time || null,
+        delivery_method || 'pickup',
+        delivery_city || null, delivery_street || null,
+        delivery_house || null, delivery_apartment || null,
+        payment_method || 'cash']);
 
     const bookingId = result.rows[0].id;
 
     if (items && Array.isArray(items)) {
       for (const item of items) {
-        if (item.id && item.quantity) {
+        await client.query(
+          `INSERT INTO order_items (booking_id, item_type, item_id, item_name, quantity, unit_price)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [bookingId, item.item_type || 'part', item.id || null,
+           item.item_name || item.name || '', item.quantity || 1, item.price || null]
+        );
+        if ((!item.item_type || item.item_type === 'part') && item.id && item.quantity) {
           await client.query(
-            'UPDATE parts SET stock = stock - $1 WHERE id = $2 AND stock >= $1',
+            'UPDATE parts SET stock = GREATEST(stock - $1, 0) WHERE id = $2',
             [item.quantity, item.id]
           );
         }
@@ -429,15 +488,29 @@ app.put('/api/bookings/:id/status', authenticateToken, requireAdmin, async (req,
 
 app.put('/api/bookings/:id', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const { name, phone, email, car, date, time, message, status } = req.body;
+    const {
+      name, phone, email, car, message, status,
+      booking_date, booking_time,
+      delivery_method, delivery_city, delivery_street, delivery_house, delivery_apartment,
+      payment_method
+    } = req.body;
     await pool.query(`
-      UPDATE bookings 
-      SET name = $1, phone = $2, email = $3, car = $4, date = $5, time = $6, message = $7, status = $8
-      WHERE id = $9
-    `, [name, phone, email, car, date, time, message, status || 'new', req.params.id]);
-    
-    const booking = await pool.query('SELECT * FROM bookings WHERE id = $1', [req.params.id]);
-    res.json(booking.rows[0]);
+      UPDATE bookings SET
+        name = $1, phone = $2, email = $3, car = $4, message = $5, status = $6,
+        booking_date = $7, booking_time = $8,
+        delivery_method = $9, delivery_city = $10, delivery_street = $11,
+        delivery_house = $12, delivery_apartment = $13, payment_method = $14
+      WHERE id = $15
+    `, [name, phone, email, car, message, status || 'new',
+        booking_date || null, booking_time || null,
+        delivery_method || 'pickup',
+        delivery_city || null, delivery_street || null,
+        delivery_house || null, delivery_apartment || null,
+        payment_method || 'cash',
+        req.params.id]);
+
+    const items = await getBookingWithItems(req.params.id);
+    res.json(items[0] || {});
   } catch (error) {
     console.error('Update booking error:', error);
     res.status(500).json({ error: 'Failed to update booking' });
@@ -453,11 +526,119 @@ app.delete('/api/bookings/:id', authenticateToken, requireAdmin, async (req, res
   }
 });
 
+const getGalleryWithImages = async (id = null) => {
+  const whereClause = id ? 'WHERE g.id = $1' : '';
+  const params = id ? [id] : [];
+  const result = await pool.query(`
+    SELECT g.*, COALESCE(
+      json_agg(json_build_object('id', gi.id, 'url', gi.image_url, 'sort', gi.sort_order)
+        ORDER BY gi.sort_order) FILTER (WHERE gi.id IS NOT NULL),
+      '[]'::json
+    ) as images_arr
+    FROM gallery g
+    LEFT JOIN gallery_images gi ON gi.gallery_id = g.id
+    ${whereClause}
+    GROUP BY g.id
+    ORDER BY g.created_at DESC
+  `, params);
+  return result.rows.map(item => ({
+    ...item,
+    images: item.images_arr.map(i => i.url),
+    images_detail: item.images_arr
+  }));
+};
+
 app.get('/api/gallery', async (req, res) => {
-  const gallery = await pool.query('SELECT * FROM gallery ORDER BY created_at DESC');
-  gallery.rows.forEach(item => {
-    item.images = JSON.parse(item.image || '[]');
-  });
+  try {
+    const items = await getGalleryWithImages();
+    res.json(items);
+  } catch (error) {
+    console.error('Gallery fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch gallery' });
+  }
+});
+
+app.get('/api/gallery/:id', async (req, res) => {
+  try {
+    const items = await getGalleryWithImages(req.params.id);
+    if (items.length === 0) {
+      return res.status(404).json({ error: 'Gallery item not found' });
+    }
+    res.json(items[0]);
+  } catch (error) {
+    console.error('Gallery fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch gallery item' });
+  }
+});
+
+app.post('/api/gallery', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { title_ru, title_en, description_ru, description_en, images } = req.body;
+    
+    if (!title_ru) {
+      return res.status(400).json({ error: 'Title is required' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO gallery (title_ru, title_en, description_ru, description_en)
+      VALUES ($1, $2, $3, $4) RETURNING *
+    `, [title_ru, title_en, description_ru, description_en]);
+
+    const galleryId = result.rows[0].id;
+    const imgUrls = Array.isArray(images) ? images.filter(Boolean) : [];
+
+    for (let i = 0; i < imgUrls.length; i++) {
+      await pool.query(
+        'INSERT INTO gallery_images (gallery_id, image_url, sort_order) VALUES ($1, $2, $3)',
+        [galleryId, imgUrls[i], i]
+      );
+    }
+
+    const items = await getGalleryWithImages(galleryId);
+    res.status(201).json(items[0]);
+  } catch (error) {
+    console.error('Create gallery error:', error);
+    res.status(500).json({ error: 'Failed to create gallery item: ' + error.message });
+  }
+});
+
+app.put('/api/gallery/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { title_ru, title_en, description_ru, description_en, images } = req.body;
+    
+    await pool.query(`
+      UPDATE gallery 
+      SET title_ru = $1, title_en = $2, description_ru = $3, description_en = $4
+      WHERE id = $5
+    `, [title_ru, title_en, description_ru, description_en, req.params.id]);
+
+    // Replace all images
+    await pool.query('DELETE FROM gallery_images WHERE gallery_id = $1', [req.params.id]);
+    const imgUrls = Array.isArray(images) ? images.filter(Boolean) : [];
+    for (let i = 0; i < imgUrls.length; i++) {
+      await pool.query(
+        'INSERT INTO gallery_images (gallery_id, image_url, sort_order) VALUES ($1, $2, $3)',
+        [req.params.id, imgUrls[i], i]
+      );
+    }
+
+    const items = await getGalleryWithImages(req.params.id);
+    res.json(items[0]);
+  } catch (error) {
+    console.error('Update gallery error:', error);
+    res.status(500).json({ error: 'Failed to update gallery item' });
+  }
+});
+
+app.delete('/api/gallery/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM gallery WHERE id = $1', [req.params.id]);
+    res.json({ message: 'Gallery item deleted' });
+  } catch (error) {
+    console.error('Delete gallery error:', error);
+    res.status(500).json({ error: 'Failed to delete gallery item' });
+  }
+});
   res.json(gallery.rows);
 });
 
