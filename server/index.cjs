@@ -9,7 +9,9 @@ const multer = require('multer');
 const nodemailer = require('nodemailer');
 
 const pool = new Pool(
-  process.env.DATABASE_URL
+  process.env.DATABASE_PUBLIC_URL
+    ? { connectionString: process.env.DATABASE_PUBLIC_URL, ssl: { rejectUnauthorized: false } }
+    : process.env.DATABASE_URL
     ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
     : {
         host: 'localhost',
