@@ -8,13 +8,17 @@ const fs = require('fs');
 const multer = require('multer');
 const nodemailer = require('nodemailer');
 
-const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  database: 'YelshankaClub',
-  user: 'postgres',
-  password: '123'
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+    : {
+        host: 'localhost',
+        port: 5432,
+        database: 'YelshankaClub',
+        user: 'postgres',
+        password: '123'
+      }
+);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -38,8 +42,8 @@ const upload = multer({ storage });
 const transporter = nodemailer.createTransport({
   service: 'email',
   auth: {
-    user: 'yelshankaclub@internet.ru',
-    pass: 'KSqQeLxjOj7zZcNosx7B'
+    user: process.env.SMTP_USER || 'yelshankaclub@internet.ru',
+    pass: process.env.SMTP_PASS || 'KSqQeLxjOj7zZcNosx7B'
   }
 });
 

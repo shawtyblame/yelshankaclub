@@ -10,6 +10,7 @@ export default function Feedback() {
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [consent, setConsent] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -98,7 +99,21 @@ export default function Feedback() {
 
               {error && <div className={styles.error}>{error}</div>}
 
-              <button type="submit" className={styles.submitBtn} disabled={sending}>
+              <label className={styles.consentLabel}>
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                />
+                <span>
+                  Я согласен на обработку персональных данных{' '}
+                  <Link to="/consumer-info" className={styles.consentLink}>
+                    Политика конфиденциальности
+                  </Link>
+                </span>
+              </label>
+
+              <button type="submit" className={styles.submitBtn} disabled={sending || !consent}>
                 {sending ? 'Отправка...' : 'Отправить'}
               </button>
             </form>

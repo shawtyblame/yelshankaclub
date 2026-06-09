@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Auth.module.css';
 
@@ -10,6 +10,7 @@ export default function Auth() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [consent, setConsent] = useState(false);
   
   const { login, register } = useAuth();
   const navigate = useNavigate();
@@ -99,7 +100,23 @@ export default function Auth() {
 
           {error && <div className={styles.error}>{error}</div>}
 
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
+          {!isLogin && (
+            <label className={styles.consentLabel}>
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+              />
+              <span>
+                Я согласен на обработку персональных данных{' '}
+                <Link to="/consumer-info" className={styles.consentLink}>
+                  Политика конфиденциальности
+                </Link>
+              </span>
+            </label>
+          )}
+
+          <button type="submit" className={styles.submitBtn} disabled={loading || (!isLogin && !consent)}>
             {loading ? 'Загрузка...' : isLogin ? 'Войти' : 'Зарегистрироваться'}
           </button>
         </form>

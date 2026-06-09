@@ -74,6 +74,37 @@
   margin-bottom: 16px;
 }
 
+.consentLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.consentLabel input {
+  width: 20px;
+  height: 20px;
+  accent-color: #fff;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.consentLink {
+  color: #e63946;
+  text-decoration: underline;
+  transition: opacity 0.3s ease;
+}
+
+.consentLink:hover {
+  opacity: 0.8;
+}
+
 .submitBtn {
   width: 100%;
   padding: 16px;

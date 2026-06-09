@@ -15,6 +15,8 @@ export default function Cart() {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [bookInstallation, setBookInstallation] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
+  const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [consent, setConsent] = useState(false);
   
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -296,6 +298,32 @@ export default function Cart() {
                   </>
                 )}
 
+                <div className={styles.paymentSection}>
+                  <h2>{t('cart.payment.title')}</h2>
+                  <div className={styles.paymentOptions}>
+                    <label className={`${styles.paymentLabel} ${styles.paymentActive}`}>
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="cash"
+                        checked={paymentMethod === 'cash'}
+                        onChange={() => setPaymentMethod('cash')}
+                      />
+                      <span>{t('cart.payment.cash')}</span>
+                    </label>
+                    <label className={`${styles.paymentLabel} ${styles.paymentDisabled}`}>
+                      <input type="radio" name="payment" value="card" disabled />
+                      <span>{t('cart.payment.card')}</span>
+                      <span className={styles.comingSoon}>{t('cart.payment.comingSoon')}</span>
+                    </label>
+                    <label className={`${styles.paymentLabel} ${styles.paymentDisabled}`}>
+                      <input type="radio" name="payment" value="transfer" disabled />
+                      <span>{t('cart.payment.transfer')}</span>
+                      <span className={styles.comingSoon}>{t('cart.payment.comingSoon')}</span>
+                    </label>
+                  </div>
+                </div>
+
                 <h2>{t('cart.contactInfo')}</h2>
                 
                 <div className={styles.field}>
@@ -332,7 +360,21 @@ export default function Cart() {
 
                 {error && <div className={styles.error}>{t('cart.error')}</div>}
 
-                <button type="submit" className={styles.submitBtn} disabled={ordering}>
+                <label className={styles.consentLabel}>
+                  <input
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                  />
+                  <span>
+                    {t('cart.consent')}{' '}
+                    <Link to="/consumer-info" className={styles.consentLink}>
+                      {t('cart.privacyPolicy')}
+                    </Link>
+                  </span>
+                </label>
+
+                <button type="submit" className={styles.submitBtn} disabled={ordering || !consent}>
                   {ordering ? t('cart.ordering') : t('cart.submit')}
                 </button>
               </form>

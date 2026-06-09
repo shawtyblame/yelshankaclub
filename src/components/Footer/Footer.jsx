@@ -5,7 +5,10 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerInner}>
-        <Link to="/feedback" className={styles.link}>Связаться с нами</Link>
+        <div className={styles.links}>
+          <Link to="/feedback" className={styles.link}>Связаться с нами</Link>
+          <Link to="/consumer-info" className={styles.link}>Информация для потребителей</Link>
+        </div>
         <span className={styles.copy}>© 2026 Автосервис</span>
       </div>
     </footer>

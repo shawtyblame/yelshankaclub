@@ -1,13 +1,17 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 
-const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  database: 'Avtoservis',
-  user: 'postgres',
-  password: '123'
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+    : {
+        host: 'localhost',
+        port: 5432,
+        database: 'Avtoservis',
+        user: 'postgres',
+        password: '123'
+      }
+);
 
 async function init() {
   await pool.query(`CREATE TABLE IF NOT EXISTS users (
@@ -42,6 +46,9 @@ async function init() {
       ['yelshankaclub@internet.ru', hash, 'Administrator', 'admin']);
     console.log('Admin created: yelshankaclub@internet.ru / admin123');
   }
+  await pool.query(`CREATE TABLE IF NOT EXISTS contacts (
+    id SERIAL PRIMARY KEY, type TEXT NOT NULL, value TEXT NOT NULL, label TEXT, order_num INTEGER DEFAULT 0)`);
+
   console.log('PostgreSQL tables initialized!');
   pool.end();
 }

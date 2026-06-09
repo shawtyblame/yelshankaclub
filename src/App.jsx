@@ -11,6 +11,7 @@ import Cart from './pages/Cart/Cart';
 import Gallery from './pages/Gallery/Gallery';
 import GalleryItem from './pages/GalleryItem/GalleryItem';
 import Feedback from './pages/Feedback/Feedback';
+import ConsumerInfo from './pages/ConsumerInfo/ConsumerInfo';
 import './i18n';
 import './styles/globals.css';
 
@@ -65,6 +66,7 @@ function App() {
           <Route path="/service/:id" element={<ServiceDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/consumer-info" element={<ConsumerInfo />} />
           <Route path="/works" element={<Gallery />} />
           <Route path="/works/:id" element={<GalleryItem />} />
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -59,7 +59,8 @@
       "invalidEmail": "Invalid email address"
     },
     "success": "Request sent! We'll contact you shortly.",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "consent": "I consent to the processing of personal data"
   },
   "contacts": {
     "title": "Get In Touch",
@@ -111,7 +112,16 @@
       "message": "We will contact you shortly to confirm.",
       "back": "Back to Home"
     },
-    "error": "Error placing order"
+    "error": "Error placing order",
+    "payment": {
+      "title": "Payment method",
+      "cash": "Cash",
+      "card": "Card",
+      "transfer": "Transfer",
+      "comingSoon": "coming soon"
+    },
+    "consent": "I consent to the processing of personal data",
+    "privacyPolicy": "Privacy Policy"
   },
   "profile": {
     "title": "My Account",
@@ -205,7 +215,8 @@
       "confirmPassword": "Confirm password",
       "submit": "Register",
       "hasAccount": "Have an account?",
-      "login": "Login"
+      "login": "Login",
+      "consent": "I consent to the processing of personal data"
     }
   },
   "admin": {

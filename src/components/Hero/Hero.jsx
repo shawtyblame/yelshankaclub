@@ -16,7 +16,8 @@ export default function Hero() {
       <div className={styles.overlay}></div>
       
       <div className={styles.heroContent}>
-        <img src="/logo-avtoservis.png" alt="Автосервис" className={styles.heroLogo} />
+        <h1 className={styles.heroTitle}>Автосервис</h1>
+        <p className={styles.heroSubtitle}>{t('hero.subtitle')}</p>
         <button className={styles.heroCta} onClick={scrollToCatalog}>
           {t('hero.cta')}
         </button>
