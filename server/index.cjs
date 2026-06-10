@@ -639,72 +639,7 @@ app.delete('/api/gallery/:id', authenticateToken, requireAdmin, async (req, res)
     res.status(500).json({ error: 'Failed to delete gallery item' });
   }
 });
-  res.json(gallery.rows);
-});
 
-app.get('/api/gallery/:id', async (req, res) => {
-  const item = await pool.query('SELECT * FROM gallery WHERE id = $1', [req.params.id]);
-  if (item.rows.length === 0) {
-    return res.status(404).json({ error: 'Gallery item not found' });
-  }
-  item.rows[0].images = JSON.parse(item.rows[0].image || '[]');
-  res.json(item.rows[0]);
-});
-
-app.post('/api/gallery', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const { title_ru, title_en, description_ru, description_en, images } = req.body;
-    
-    if (!title_ru) {
-      return res.status(400).json({ error: 'Title is required' });
-    }
-
-    const imagesJson = JSON.stringify(images);
-    
-    const result = await pool.query(`
-      INSERT INTO gallery (title_ru, title_en, description_ru, description_en, image)
-      VALUES ($1, $2, $3, $4, $5) RETURNING *
-    `, [title_ru, title_en, description_ru, description_en, imagesJson]);
-
-    result.rows[0].images = JSON.parse(result.rows[0].image || '[]');
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error('Create gallery error:', error);
-    res.status(500).json({ error: 'Failed to create gallery item: ' + error.message });
-  }
-});
-
-app.put('/api/gallery/:id', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    const { title_ru, title_en, description_ru, description_en, images } = req.body;
-    
-    const imagesJson = Array.isArray(images) ? JSON.stringify(images) : images;
-    
-    await pool.query(`
-      UPDATE gallery 
-      SET title_ru = $1, title_en = $2, description_ru = $3, description_en = $4, image = $5
-      WHERE id = $6
-    `, [title_ru, title_en, description_ru, description_en, imagesJson, req.params.id]);
-
-    const item = await pool.query('SELECT * FROM gallery WHERE id = $1', [req.params.id]);
-    if (item.rows[0].image) {
-      item.rows[0].images = JSON.parse(item.rows[0].image);
-    }
-    res.json(item.rows[0]);
-  } catch (error) {
-    console.error('Update gallery error:', error);
-    res.status(500).json({ error: 'Failed to update gallery item' });
-  }
-});
-
-app.delete('/api/gallery/:id', authenticateToken, requireAdmin, async (req, res) => {
-  try {
-    await pool.query('DELETE FROM gallery WHERE id = $1', [req.params.id]);
-    res.json({ message: 'Gallery item deleted' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete gallery item' });
-  }
-});
 
 app.get('/api/gallery/:id/comments', async (req, res) => {
   try {
